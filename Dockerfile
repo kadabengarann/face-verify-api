@@ -43,10 +43,8 @@ ENV HOME=/home/user \
 RUN pip3 install --no-cache-dir --upgrade pip && \
     pip3 install --no-cache-dir --upgrade -r /code/requirements.txt && \
     pip3 install --no-cache-dir uvicorn
-    
-# Print installed packages to the build log
-RUN cat /code/installed_packages.log
 
+    
 # Set the application directory for the user
 WORKDIR $HOME/app
 
