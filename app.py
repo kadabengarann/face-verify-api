@@ -45,7 +45,7 @@ async def gradio_ui():
             <title>Gradio UI</title>
         </head>
         <body>
-            <iframe src="http://localhost:7861" width="100%" height="100%" frameborder="0"></iframe>
+            <iframe src="http://0.0.0.0:7861" width="100%" height="100%" frameborder="0"></iframe>
         </body>
     </html>
     """
