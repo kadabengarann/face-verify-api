@@ -40,9 +40,9 @@ ENV HOME=/home/user \
     GRADIO_THEME=huggingface
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir --upgrade pip && \
-    pip3 install --no-cache-dir --upgrade -r /code/requirements.txt && \
-    pip3 install --no-cache-dir uvicorn
+RUN python3.8 -m pip install --no-cache-dir --upgrade pip && \
+    python3.8 -m pip install --no-cache-dir -r /code/requirements.txt && \
+    python3.8 -m pip install --no-cache-dir uvicorn
 
     
 # Set the application directory for the user
@@ -54,5 +54,5 @@ COPY --chown=user . $HOME/app
 # Expose the Uvicorn FastAPI port
 EXPOSE 7860
 
-# Run the application using the same command as local setup
+# Run the application
 CMD ["python3.8", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860", "--reload"]
