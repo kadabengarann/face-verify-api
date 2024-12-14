@@ -4,16 +4,20 @@ FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
-# Install essential system packages
+# Install essential system packages and Python 3.8
 RUN apt-get update && apt-get install --no-install-recommends -y \
+    software-properties-common && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
     python3.8 \
     python3.8-venv \
+    python3.8-dev \
     python3-pip \
     git \
     ffmpeg \
-    libglib2.0-0 \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    libglib2.0-0 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /code
