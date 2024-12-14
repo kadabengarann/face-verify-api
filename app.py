@@ -116,7 +116,7 @@ async def root():
         <title>Gradio App</title>
     </head>
     <body style="margin: 0; padding: 0; overflow: hidden;">
-        <iframe src="/gradio" style="width: 100%; height: 100vh; border: none;"></iframe>
+        <iframe src="https://kadabengaran-face-verify.hf.space/gradio/" style="width: 100%; height: 100vh; border: none;"></iframe>
     </body>
     </html>
     """)
