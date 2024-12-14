@@ -1,0 +1,12 @@
+tensorflow==2.7.0
+tf-keras==2.15.0
+deepface
+flask
+gradio==3.12.0
+protobuf==3.20.*
+validators
+httpx==0.24.1
+httpcore==0.15.0
+fastapi
+uvicorn
+asyncio
