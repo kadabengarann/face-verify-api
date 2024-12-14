@@ -1,10 +1,10 @@
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Request
+from fastapi.responses import RedirectResponse, JSONResponse, HTMLResponse
 import gradio as gr
 from deepface import DeepFace
 import os
 from threading import Thread
-import asyncio
+from gradio.routes import App as GradioApp
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -35,21 +35,6 @@ def face_verification_uii(img1, img2, dist="cosine", model="Facenet", detector="
         }
     except Exception as e:
         return {"error": str(e)}
-
-# FastAPI Endpoint
-@app.get("/", response_class=HTMLResponse)
-async def gradio_ui():
-    html_content = """
-    <html>
-        <head>
-            <title>Gradio UI</title>
-        </head>
-        <body>
-            <iframe src="http://0.0.0.0:7861" width="100%" height="100%" frameborder="0"></iframe>
-        </body>
-    </html>
-    """
-    return HTMLResponse(content=html_content)
 
 @app.post("/face_verification")
 async def face_verification(
@@ -104,39 +89,38 @@ async def face_verification(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def run_gradio_ui():
-    """
-    Function to run Gradio in a separate thread
-    """
-    # Create and set an event loop for this thread
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+# Define Gradio Blocks
+with gr.Blocks() as demo:
+    img1 = gr.Image(type="filepath", label="Image 1")
+    img2 = gr.Image(type="filepath", label="Image 2")
+    dist = gr.Dropdown(choices=["cosine", "euclidean", "euclidean_l2"], label="Distance Metric", value="cosine")
+    model = gr.Dropdown(choices=["VGG-Face", "Facenet", "Facenet512", "ArcFace"], label="Model", value="Facenet")
+    detector = gr.Dropdown(choices=["opencv", "ssd", "mtcnn", "retinaface", "mediapipe"], label="Detector", value="ssd")
+    btn = gr.Button("Verify")
+    output = gr.Textbox()
 
-    def face_verification_ui(img1, img2, dist, model, detector):
-        result = face_verification_uii(img1, img2, dist, model, detector)
-        return result
+    btn.click(face_verification_uii, inputs=[img1, img2, dist, model, detector], outputs=output)
 
-    with gr.Blocks() as demo:
-        img1 = gr.Image(type="filepath", label="Image 1")
-        img2 = gr.Image(type="filepath", label="Image 2")
-        dist = gr.Dropdown(choices=["cosine", "euclidean", "euclidean_l2"], label="Distance Metric", value="cosine")
-        model = gr.Dropdown(choices=["VGG-Face", "Facenet", "Facenet512", "ArcFace"], label="Model", value="Facenet")
-        detector = gr.Dropdown(choices=["opencv", "ssd", "mtcnn", "retinaface", "mediapipe"], label="Detector", value="ssd")
-        btn = gr.Button("Verify")
-        output = gr.Textbox()
+gradio_app = GradioApp.create_app(demo)
+app.mount("/gradio", gradio_app)
 
-        btn.click(face_verification_ui, inputs=[img1, img2, dist, model, detector], outputs=output)
-    demo.launch(server_name="0.0.0.0", server_port=7861, show_api=False)
-    
-# FastAPI Startup Event
-# FastAPI Startup Event
-@app.on_event("startup")
-def startup_event():
+@app.get("/", response_class=HTMLResponse)
+async def root():
     """
-    Start Gradio UI in a separate thread
+    Redirect root to the Gradio app
     """
-    thread = Thread(target=run_gradio_ui)
-    thread.start()  
+    return HTMLResponse("""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Gradio App</title>
+    </head>
+    <body style="margin: 0; padding: 0; overflow: hidden;">
+        <iframe src="/gradio" style="width: 100%; height: 100vh; border: none;"></iframe>
+    </body>
+    </html>
+    """)
+
 # Running Both Servers
 if __name__ == "__main__":
     import uvicorn
