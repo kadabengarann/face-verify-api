@@ -41,7 +41,9 @@ ENV HOME=/home/user \
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --upgrade pip && \
-    pip3 install --no-cache-dir --upgrade -r /code/requirements.txt
+    pip3 install --no-cache-dir --upgrade -r /code/requirements.txt && \
+    pip3 show uvicorn
+
 
 # Set the application directory for the user
 WORKDIR $HOME/app
