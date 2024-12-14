@@ -1,6 +1,6 @@
 ---
 title: Face Verify
-emoji: ⚡
+emoji: 🎭
 colorFrom: green
 colorTo: yellow
 sdk: docker
