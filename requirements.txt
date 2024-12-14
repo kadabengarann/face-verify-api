@@ -1,12 +1,11 @@
 tensorflow==2.18.0
 tf-keras==2.15.0
-deepface
-flask
+deepface==0.0.93
 gradio==3.12.0
 protobuf==3.20.*
-validators
+validators==0.34.0
 httpx==0.24.1
 httpcore==0.15.0
-fastapi
-uvicorn
-asyncio
+fastapi==0.115.6
+uvicorn==0.33.0
+asyncio==3.4.3
