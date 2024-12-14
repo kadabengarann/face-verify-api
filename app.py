@@ -1,9 +1,8 @@
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Request
-from fastapi.responses import RedirectResponse, JSONResponse, HTMLResponse
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException
+from fastapi.responses import HTMLResponse
 import gradio as gr
 from deepface import DeepFace
 import os
-from threading import Thread
 from gradio.routes import App as GradioApp
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -91,8 +90,8 @@ async def face_verification(
 
 # Define Gradio Blocks
 with gr.Blocks() as demo:
-    img1 = gr.Image(type="filepath", label="Image 1")
-    img2 = gr.Image(type="filepath", label="Image 2")
+    img1 = gr.Image(label="Image 1",sources=["upload", "webcam", "clipboard"])
+    img2 = gr.Image(label="Image 2",sources=["upload", "webcam", "clipboard"])
     dist = gr.Dropdown(choices=["cosine", "euclidean", "euclidean_l2"], label="Distance Metric", value="cosine")
     model = gr.Dropdown(choices=["VGG-Face", "Facenet", "Facenet512", "ArcFace"], label="Model", value="Facenet")
     detector = gr.Dropdown(choices=["opencv", "ssd", "mtcnn", "retinaface", "mediapipe"], label="Detector", value="ssd")
@@ -109,14 +108,22 @@ async def root():
     """
     Redirect root to the Gradio app
     """
-    return HTMLResponse("""
+    # Check if running on Hugging Face Spaces
+    if os.getenv("SPACE_ID"):
+        # Running on Hugging Face Spaces
+        gradio_url = "https://kadabengaran-face-verify.hf.space/gradio/"
+    else:
+        # Running locally
+        gradio_url = "/gradio"
+
+    return HTMLResponse(f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>Gradio App</title>
     </head>
     <body style="margin: 0; padding: 0; overflow: hidden;">
-        <iframe src="https://kadabengaran-face-verify.hf.space/gradio/" style="width: 100%; height: 100vh; border: none;"></iframe>
+        <iframe src="{gradio_url}" style="width: 100%; height: 100vh; border: none;"></iframe>
     </body>
     </html>
     """)
