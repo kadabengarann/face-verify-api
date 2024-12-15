@@ -7,7 +7,6 @@ from gradio.routes import App as GradioApp
 import logging
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -18,8 +17,8 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
     logger.error(f"HTTP error occurred: {exc.detail}")
     return JSONResponse(
         status_code=exc.status_code,
@@ -30,20 +29,33 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     body = await request.body()
     logger.error(f"Validation error: {exc.errors()}")
-    logger.error(f"Request body: {body.decode()}")
+    try:
+        logger.error(f"Request body: {body.decode('utf-8')}")
+    except UnicodeDecodeError:
+        logger.warning("Request body contains non-text data and could not be decoded.")
     return JSONResponse(
         status_code=400,
         content={"detail": exc.errors()},
-    )
-    
+    ) 
+
 @app.middleware("http")
 async def log_request_body(request: Request, call_next):
-    body = await request.body()
-    logger.info(f"Incoming request: {request.method} {request.url}")
-    logger.info(f"Request body: {body.decode()}")
+    # Check the Content-Type of the request
+    content_type = request.headers.get('Content-Type', '')
+    
+    if 'multipart/form-data' in content_type:
+        # For binary data, log a placeholder message
+        logger.info(f"Incoming request: {request.method} {request.url}")
+        logger.info("Request body contains binary data and is not logged.")
+    else:
+        # For non-binary data, log the actual body
+        body = await request.body()
+        logger.info(f"Incoming request: {request.method} {request.url}")
+        logger.info(f"Request body: {body.decode('utf-8')}")
+    
     response = await call_next(request)
     return response
-    
+
 # Gradio Interface Function
 def face_verification_uii(img1, img2, dist="cosine", model="Facenet", detector="ssd"):
     """
@@ -119,6 +131,7 @@ async def face_verification(
         }
 
     except Exception as e:
+        logger.error(f"An error occurred during face verification: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
