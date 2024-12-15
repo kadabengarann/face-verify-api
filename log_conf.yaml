@@ -18,6 +18,10 @@ loggers:
   uvicorn.access:
     handlers: [console]
     level: INFO
+  fastapi:
+    level: DEBUG
+    handlers: [console]
+    propagate: False
 root:
   handlers: [console]
   level: INFO
