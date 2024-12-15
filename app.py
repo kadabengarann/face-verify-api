@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 import gradio as gr
 from deepface import DeepFace
 import os
+import base64
 from gradio.routes import App as GradioApp
 import logging
 from fastapi.exceptions import RequestValidationError
@@ -83,29 +84,44 @@ def face_verification_uii(img1, img2, dist="cosine", model="Facenet", detector="
 
 @app.post("/face_verification")
 async def face_verification(
-    img1: UploadFile = File(...),
-    img2: UploadFile = File(...),
+    img1: UploadFile = File(None),
+    img2: UploadFile = File(None),
+    img1_base64: str = Form(None),
+    img2_base64: str = Form(None),
     dist: str = Form("cosine"),
     model: str = Form("Facenet"),
     detector: str = Form("ssd")
 ):
-    """
-    Endpoint to verify if two images belong to the same person.
-    """
+    if not img1 and not img2 and not img1_base64 and not img2_base64:
+        raise HTTPException(status_code=400, detail="Invalid input: At least one image input is required.")
+
     try:
         # Ensure uploads directory exists
         if not os.path.exists("uploads"):
             os.makedirs("uploads")
 
-        # Save uploaded images to disk
-        img1_path = os.path.join("uploads", img1.filename)
-        img2_path = os.path.join("uploads", img2.filename)
-        
-        with open(img1_path, "wb") as f:
-            f.write(await img1.read())
-        with open(img2_path, "wb") as f:
-            f.write(await img2.read())
+        img1_path = None
+        img2_path = None
 
+        # Process img1
+        if img1:
+            img1_path = os.path.join("uploads", img1.filename)
+            with open(img1_path, "wb") as f:
+                f.write(await img1.read())
+        elif img1_base64:
+            img1_path = os.path.join("uploads", "img1_base64.png")
+            with open(img1_path, "wb") as f:
+                f.write(base64.b64decode(img1_base64))
+
+        # Process img2
+        if img2:
+            img2_path = os.path.join("uploads", img2.filename)
+            with open(img2_path, "wb") as f:
+                f.write(await img2.read())
+        elif img2_base64:
+            img2_path = os.path.join("uploads", "img2_base64.png")
+            with open(img2_path, "wb") as f:
+                f.write(base64.b64decode(img2_base64))
         # Run DeepFace verification
         result = DeepFace.verify(
             img1_path=img1_path,
