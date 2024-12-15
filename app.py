@@ -100,35 +100,7 @@ with gr.Blocks() as demo:
 
     btn.click(face_verification_uii, inputs=[img1, img2, dist, model, detector], outputs=output)
 
-gradio_app = GradioApp.create_app(demo)
-app.mount("/gradio", gradio_app)
-
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    """
-    Redirect root to the Gradio app
-    """
-    # Check if running on Hugging Face Spaces
-    if os.getenv("SPACE_ID"):
-        # Running on Hugging Face Spaces
-        gradio_url = "https://kadabengaran-face-verify.hf.space/gradio/"
-    else:
-        # Running locally
-        gradio_url = "/gradio"
-
-    return HTMLResponse(f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Gradio App</title>
-    </head>
-    <body style="margin: 0; padding: 0; overflow: hidden;">
-        <iframe src="{gradio_url}" style="width: 100%; height: 100vh; border: none;"></iframe>
-    </body>
-    </html>
-    """)
-
-# Running Both Servers
+# Running Servers
 if __name__ == "__main__":
     import uvicorn
     
