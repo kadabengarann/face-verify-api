@@ -1,15 +1,49 @@
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse
 import gradio as gr
 from deepface import DeepFace
 import os
 from gradio.routes import App as GradioApp
+import logging
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # FastAPI instance
 app = FastAPI()
 
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    logger.error(f"HTTP error occurred: {exc.detail}")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    body = await request.body()
+    logger.error(f"Validation error: {exc.errors()}")
+    logger.error(f"Request body: {body.decode()}")
+    return JSONResponse(
+        status_code=400,
+        content={"detail": exc.errors()},
+    )
+    
+@app.middleware("http")
+async def log_request_body(request: Request, call_next):
+    body = await request.body()
+    logger.info(f"Incoming request: {request.method} {request.url}")
+    logger.info(f"Request body: {body.decode()}")
+    response = await call_next(request)
+    return response
+    
 # Gradio Interface Function
 def face_verification_uii(img1, img2, dist="cosine", model="Facenet", detector="ssd"):
     """
