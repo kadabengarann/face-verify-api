@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     python3-pip \
     git \
     ffmpeg \
-    libglib2.0-0 && \
+    libglib2.0-0 \
+    libhdf5-dev \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
