@@ -1,4 +1,4 @@
-tensorflow==2.7.0
+tensorflow==2.10.0
 tf-keras==2.15.0
 deepface==0.0.93
 gradio==3.12.0
