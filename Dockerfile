@@ -5,21 +5,22 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
 # Install essential system packages and Python 3.8
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
-        software-properties-common \
-        pkg-config \
-        libhdf5-dev \
-        build-essential \
-        python3.8 \
-        python3.8-venv \
-        python3.8-dev \
-        python3-pip \
-        git \
-        ffmpeg \
-        libglib2.0-0 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    software-properties-common && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install --no-install-recommends -y \
+    software-properties-common \
+    pkg-config \
+    libhdf5-dev \
+    build-essential \
+    python3.8 \
+    python3.8-venv \
+    python3.8-dev \
+    python3-pip \
+    git \
+    ffmpeg \
+    libglib2.0-0 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /code
