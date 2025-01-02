@@ -1,4 +1,4 @@
-FROM python:3.8-slim-bullseye
+FROM python:3.8
 
 # Set ARG and ENV for non-interactive installations and Python unbuffered mode
 ARG DEBIAN_FRONTEND=noninteractive
