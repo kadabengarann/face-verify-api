@@ -8,6 +8,8 @@ ENV PYTHONUNBUFFERED=1
 # Install essential system packages and dependencies
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        python3.8-venv \
+        python3.8-dev \
         software-properties-common \
         python3-apt \
         pkg-config \
