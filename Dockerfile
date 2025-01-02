@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:latest
+FROM tensorflow/tensorflow:latest-jupyter
 
 # Set ARG and ENV for non-interactive installations and Python unbuffered mode
 ARG DEBIAN_FRONTEND=noninteractive
