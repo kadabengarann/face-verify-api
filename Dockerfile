@@ -41,8 +41,8 @@ ENV HOME=/home/user \
 RUN df -h
 
 # Upgrade pip and install dependencies with binary wheels
-RUN python3.8 -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    python3.8 -m pip install --no-cache-dir --only-binary=:all: -r /code/requirements.txt && \
+RUN python3.8 -m pip install --no-cache-dir --upgrade pip && \
+    python3.8 -m pip install --no-cache-dir -r /code/requirements.txt && \
     python3.8 -m pip install --no-cache-dir uvicorn
 
 # Set the application directory for the user
