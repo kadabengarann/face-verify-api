@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=1
 # Install essential system packages and Python development tools
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        python3.8 \
         python3-dev \
         software-properties-common \
         pkg-config \
