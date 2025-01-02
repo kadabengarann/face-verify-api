@@ -7,12 +7,11 @@ ENV PYTHONUNBUFFERED=1
 # Install essential system packages and Python development tools
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-        python3-venv \
         python3-dev \
         software-properties-common \
-        python3-apt \
         pkg-config \
         libhdf5-dev \
+        libhdf5-serial-dev \
         build-essential \
         git \
         ffmpeg \
@@ -33,7 +32,6 @@ USER user
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH \
     PYTHONPATH=$HOME/app \
-    PYTHONUNBUFFERED=1 \
     GRADIO_ALLOW_FLAGGING=never \
     GRADIO_NUM_PORTS=1 \
     GRADIO_SERVER_NAME=0.0.0.0 \
@@ -42,12 +40,12 @@ ENV HOME=/home/user \
 # Check disk space before installing dependencies
 RUN df -h
 
-# Install Python dependencies
-RUN python3.8 -m pip install --no-cache-dir --upgrade pip && \
-    python3.8 -m pip install --no-cache-dir -r /code/requirements.txt && \
+# Upgrade pip and install dependencies with binary wheels
+RUN python3.8 -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    python3.8 -m pip install --no-cache-dir --only-binary=:all: tensorflow==2.12.0 tf-keras==2.15.0 && \
+    python3.8 -m pip install --no-cache-dir --only-binary=:all: -r /code/requirements.txt && \
     python3.8 -m pip install --no-cache-dir uvicorn
 
-    
 # Set the application directory for the user
 WORKDIR $HOME/app
 
