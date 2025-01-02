@@ -1,22 +1,19 @@
-FROM python:3.8
+FROM python:3.8-slim
 
 # Set ARG and ENV for non-interactive installations and Python unbuffered mode
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
-# Install essential system packages and Python 3.8
-# Install essential system packages and dependencies
+# Install essential system packages and Python development tools
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-        python3.8-venv \
-        python3.8-dev \
+        python3-venv \
+        python3-dev \
         software-properties-common \
         python3-apt \
         pkg-config \
         libhdf5-dev \
         build-essential \
-        python3.8-venv \
-        python3.8-dev \
         git \
         ffmpeg \
         libglib2.0-0 && \
