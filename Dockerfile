@@ -42,6 +42,9 @@ ENV HOME=/home/user \
     GRADIO_SERVER_NAME=0.0.0.0 \
     GRADIO_THEME=huggingface
 
+# Check disk space before installing dependencies
+RUN df -h
+
 # Install Python dependencies
 RUN python3.8 -m pip install --no-cache-dir --upgrade pip && \
     python3.8 -m pip install --no-cache-dir -r /code/requirements.txt && \
