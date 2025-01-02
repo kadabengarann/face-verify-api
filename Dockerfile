@@ -42,7 +42,6 @@ RUN df -h
 
 # Upgrade pip and install dependencies with binary wheels
 RUN python3.8 -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    python3.8 -m pip install --no-cache-dir tensorflow==2.12.0 tf-keras==2.15.0 jax==0.4.13 && \
     python3.8 -m pip install --no-cache-dir -r /code/requirements.txt && \
     python3.8 -m pip install --no-cache-dir uvicorn
 
@@ -53,7 +52,7 @@ WORKDIR $HOME/app
 COPY --chown=user . $HOME/app
 
 # Expose the Uvicorn FastAPI port
-EXPOSE 7860
+EXPOSE 80
 
 # Run the application
-CMD ["python3.8", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860", "--reload", "--log-level", "info"]
+CMD ["python3.8", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80", "--reload", "--log-level", "info"]
