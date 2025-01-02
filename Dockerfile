@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:latest-jupyter
+FROM python:3.8-slim
 
 # Set ARG and ENV for non-interactive installations and Python unbuffered mode
 ARG DEBIAN_FRONTEND=noninteractive
@@ -43,8 +43,8 @@ RUN df -h
 
 # Upgrade pip and install dependencies with binary wheels
 RUN python3.8 -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    python3.8 -m pip install --no-cache-dir tensorflow==2.12.0 tf-keras==2.15.0 jax==0.4.13 && \
-    python3.8 -m pip install --no-cache-dir -r /code/requirements.txt && \
+    python3.8 -m pip install --no-cache-dir --only-binary=:all: tensorflow==2.12.0 tf-keras==2.15.0 jax==0.4.13 && \
+    python3.8 -m pip install --no-cache-dir --only-binary=:all: -r /code/requirements.txt && \
     python3.8 -m pip install --no-cache-dir uvicorn
 
 # Set the application directory for the user
