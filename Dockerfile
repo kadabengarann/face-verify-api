@@ -24,6 +24,12 @@ RUN apt-get update && \
         libglib2.0-0 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install python3.8-apt for Python 3.8
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+        python3.8-apt && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Set the working directory
 WORKDIR /code
 
