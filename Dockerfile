@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+FROM tensorflow/tensorflow:latest
 
 # Set ARG and ENV for non-interactive installations and Python unbuffered mode
 ARG DEBIAN_FRONTEND=noninteractive
