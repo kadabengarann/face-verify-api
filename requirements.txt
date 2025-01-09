@@ -12,3 +12,4 @@ asyncio==3.4.3
 facenet-pytorch
 mediapipe
 ultralytics
+dlib
