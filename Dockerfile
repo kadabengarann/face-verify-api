@@ -15,8 +15,7 @@ RUN apt-get update && \
         build-essential \
         git \
         ffmpeg \
-        libglib2.0-0 \
-        cmake && \
+        libglib2.0-0 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
