@@ -91,7 +91,7 @@ async def face_verification(request: ImageRequest):
             detector_backend=request.detector,
             enforce_detection=False,
         )
-        cleanup_files(img1_path, img2_path)
+        # cleanup_files(img1_path, img2_path)
 
         return {
             "verified": result["verified"],
