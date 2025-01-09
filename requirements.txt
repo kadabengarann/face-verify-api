@@ -9,6 +9,5 @@ httpcore==0.15.0
 fastapi==0.115.6
 uvicorn==0.33.0
 asyncio==3.4.3
-facenet-pytorch
 mediapipe
 ultralytics
