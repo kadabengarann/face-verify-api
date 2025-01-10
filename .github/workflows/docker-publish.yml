@@ -54,7 +54,7 @@ jobs:
   deploy:
     name: Deploy Image
     needs: publish
-    runs-on: self-hosted
+    runs-on: ${{ vars.RUNNER }}
 
     steps:
       - name: Checkout Code
@@ -62,6 +62,7 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
+          cd ~
           cd ${{ secrets.WORK_DIR }}
           docker compose pull
           docker compose up -d
